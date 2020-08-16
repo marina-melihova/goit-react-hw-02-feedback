@@ -1,16 +1,8 @@
-.caontainer {
+.container {
   max-width: 1170px;
   margin-left: auto;
   margin-right: auto;
   padding: 30px;
-}
-.btn {
-  margin-right: 15px;
-  padding: 5px;
-  border: 1px #eeeeee solid;
-  border-radius: 3px;
-  font-size: 18px;
-  background-color: #fff;
 }
 
 .total {

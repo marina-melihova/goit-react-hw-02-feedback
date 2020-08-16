@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import style from './App.module.css';
 import Statistics from './statistics/Statistics';
 import Section from './section/Section';
+import FeedbackOptions from './feedbackOptions/FeedbackOptions';
+import Notification from './notification/Notification';
 
 class App extends Component {
   state = {
@@ -13,53 +15,40 @@ class App extends Component {
   changeState = name =>
     this.setState(prevState => ({ [name]: prevState[name] + 1 }));
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-    return good + neutral + bad;
-  };
+  countTotalFeedback = () =>
+    Object.values(this.state).reduce((acc, item) => {
+      acc += item;
+      return acc;
+    }, 0);
 
-  countPositiveFeedbackPercentage = () => {
-    const { good } = this.state;
-    return Math.round((good * 100) / this.countTotalFeedback());
+  countPercentage = (item, total) => {
+    const percent = total ? Math.round((item * 100) / total) : 0;
+    return percent;
   };
 
   render() {
     const { good, neutral, bad } = this.state;
+    const total = this.countTotalFeedback();
     return (
-      <div className="container">
-        <h1>Please leave feedback</h1>
-        <button
-          className={style.btn}
-          type="button"
-          onClick={() => this.changeState('good')}
-          name="good"
-        >
-          Good
-        </button>
-        <button
-          className={style.btn}
-          type="button"
-          onClick={() => this.changeState('neutral')}
-          name="neutral"
-        >
-          Neutral
-        </button>
-        <button
-          className={style.btn}
-          type="button"
-          onClick={() => this.changeState('bad')}
-          name="bad"
-        >
-          Bad
-        </button>
-        <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={this.countTotalFeedback()}
-            positivePercentage={this.countPositiveFeedbackPercentage()}
+      <div className={style.container}>
+        <Section title="Please leave feedback">
+          <FeedbackOptions
+            options={[...Object.keys(this.state)]}
+            onLeaveFeedback={this.changeState}
           />
+        </Section>
+        <Section title="Statistics">
+          {total ? (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={total}
+              positivePercentage={this.countPercentage(good, total)}
+            />
+          ) : (
+            <Notification message="No feedback given" />
+          )}
         </Section>
       </div>
     );
